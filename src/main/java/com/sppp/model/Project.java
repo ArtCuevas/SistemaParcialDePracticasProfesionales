@@ -6,8 +6,7 @@ public class Project {
     private String relatedorg;
     private int quota;
 
-    public Project() {
-    }
+    public Project() {}
 
     public Project(int idproject, String nameprj, String relatedorg, int quota) {
         this.idproject = idproject;

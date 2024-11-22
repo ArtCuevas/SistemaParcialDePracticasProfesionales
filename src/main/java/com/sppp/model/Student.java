@@ -8,8 +8,7 @@ public class Student {
     private String enrolment;
     private Project idproject;
 
-    public Student() {
-    }
+    public Student() {}
 
     public Student(int idstudent, String name, String lastname, String nrc, String enrolment, Project idproject) {
         this.idstudent = idstudent;
