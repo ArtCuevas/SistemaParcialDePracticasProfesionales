@@ -2,7 +2,6 @@ package com.sppp.gui;
 
 import com.sppp.dao.UserDAO;
 import com.sppp.dao.UserDAOImp;
-import com.sppp.model.Student;
 import com.sppp.model.User;
 
 import javax.swing.*;
