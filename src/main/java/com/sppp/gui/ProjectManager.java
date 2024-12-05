@@ -81,25 +81,27 @@ public class ProjectManager extends JFrame {
     }
 
     private void addProject() {
-        String newProjectName = JOptionPane
-                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-        String newProjectOrg = JOptionPane
-                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-        String newProjectCuota = JOptionPane
-                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-        if (newProjectName != null && !newProjectName.trim().isEmpty()) {
-            projects.add(newProjectName.trim());
-            ProjectDAO projectDAO = new ProjectDAOImp();
-            Project p = new Project();
-            p.setNameprj(newProjectName);
-            try {
-                projectDAO.createProject(p);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            updateProjectList();
-        }
+//        String newProjectName = JOptionPane
+//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
+//        String newProjectOrg = JOptionPane
+//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
+//        String newProjectCuota = JOptionPane
+//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
+//        if (newProjectName != null && !newProjectName.trim().isEmpty()) {
+//            projects.add(newProjectName.trim());
+//            ProjectDAO projectDAO = new ProjectDAOImp();
+//            Project p = new Project();
+//            p.setNameprj(newProjectName);
+//            try {
+//                projectDAO.createProject(p);
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            updateProjectList();
+//        }
+        SwingUtilities.invokeLater(() -> {
+            ProjectForm projectForm = new ProjectForm();
+            projectForm.setVisible(true);
+        });
     }
-
-
 }

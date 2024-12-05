@@ -22,11 +22,18 @@ public class ProjectDAOImp implements ProjectDAO{
         if(project==null) return;
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "INSERT INTO " + tableName + "(nameprj, relatedorg, quota) VALUES (?,?,?)";
-        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement ps = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
         ps.setString(1, project.getNameprj());
         ps.setString(2,project.getRelatedorg());
         ps.setInt(3,project.getQuota());
-        ps.execute();
+        int affectedRows = ps.executeUpdate();
+        if (affectedRows > 0) {
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int id = generatedKeys.getInt(1);
+                project.setIdproject(id);
+            }
+        }
     }
 
     @Override

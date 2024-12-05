@@ -11,4 +11,5 @@ public interface StudentDAO {
     public void updateStudent(Student student) throws SQLException;
     public void deleteStudent(Student student) throws SQLException;
     public List<Student> getAllStudents() throws SQLException;
+    public void assignStudentToProject(int studentId, int projectId) throws SQLException;
 }
