@@ -30,13 +30,14 @@ public class UserDAOImp implements UserDAO{
     @Override
     public User readUser(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "SELECT username FROM " + tableName + " WHERE id = ?";
+        String query = "SELECT username,password FROM " + tableName + " WHERE iduser = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         User user = new User();
         if (rs.next()) {
             user.setUsername(rs.getString(1));
+            user.setPassword(rs.getString(2));
         }
         return user;
     }
@@ -45,7 +46,7 @@ public class UserDAOImp implements UserDAO{
     public void updateUser(User user) throws SQLException {
         if(user==null) return;
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "UPDATE " + tableName + " SET username = ? , password = ? WHERE id = ?";
+        String query = "UPDATE " + tableName + " SET username = ? , password = ? WHERE iduser = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, user.getUsername());
         ps.setInt(3, user.getIduser());

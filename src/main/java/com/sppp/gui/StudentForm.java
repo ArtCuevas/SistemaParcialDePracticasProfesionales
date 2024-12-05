@@ -1,6 +1,7 @@
 package com.sppp.gui;
 
 import com.sppp.dao.StudentDAO;
+import com.sppp.dao.StudentDAOImp;
 import com.sppp.model.Student;
 
 import javax.swing.*;
@@ -19,14 +20,13 @@ public class StudentForm extends JFrame {
 
     private StudentDAO studentDAO;
 
-    public StudentForm(StudentDAO studentDAO) {
-        this.studentDAO = studentDAO;
-
+    public StudentForm() {
         setTitle("Formulario de Estudiante");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        studentDAO = new StudentDAOImp();
         initUI();
     }
 

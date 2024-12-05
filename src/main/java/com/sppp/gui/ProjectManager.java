@@ -50,6 +50,13 @@ public class ProjectManager extends JFrame {
         add(new JScrollPane(projectJList), BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        searchField.addActionListener(e -> filterProjectList());
+
+        addButton.addActionListener(e -> addProject());
+        updateButton.addActionListener(e -> updateProjectList());
+        deleteButton.addActionListener(e -> deleteProject());
+
+        loadInitialProjects();
     }
 
     private void loadInitialProjects(){
@@ -63,10 +70,32 @@ public class ProjectManager extends JFrame {
         updateProjectList();
     }
 
-    private void updateProjectList(){
+
+    private void updateProjectListDisplay() {
         projectListModel.clear();
-        for(String project : projects){
+        for (String project : projects) {
             projectListModel.addElement(project);
+        }
+    }
+
+    private void updateProjectList() {
+        String selectedProject = projectJList.getSelectedValue();
+        if (selectedProject != null) {
+            ProjectDAO projectDAO = new ProjectDAOImp();
+            try {
+                Project project = projectDAO.getProjectByName(selectedProject);
+                if (project != null) {
+                    SwingUtilities.invokeLater(() -> {
+                        new UpdateProjectForm(project);
+                    });
+                    updateProjectListDisplay();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error al obtener los datos del proyecto.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un proyecto para actualizar.");
         }
     }
 
@@ -81,27 +110,30 @@ public class ProjectManager extends JFrame {
     }
 
     private void addProject() {
-//        String newProjectName = JOptionPane
-//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-//        String newProjectOrg = JOptionPane
-//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-//        String newProjectCuota = JOptionPane
-//                .showInputDialog(this, "Ingrese el nombre del nuevo Projecto:");
-//        if (newProjectName != null && !newProjectName.trim().isEmpty()) {
-//            projects.add(newProjectName.trim());
-//            ProjectDAO projectDAO = new ProjectDAOImp();
-//            Project p = new Project();
-//            p.setNameprj(newProjectName);
-//            try {
-//                projectDAO.createProject(p);
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            updateProjectList();
-//        }
         SwingUtilities.invokeLater(() -> {
             ProjectForm projectForm = new ProjectForm();
             projectForm.setVisible(true);
         });
+        updateProjectList();
+    }
+
+    private void deleteProject(){
+        String selectedProject = projectJList.getSelectedValue();
+        if (selectedProject != null) {
+            projects.remove(selectedProject);
+            ProjectDAO pkD = new ProjectDAOImp();
+            Project p = new Project();
+            p.setNameprj(selectedProject);
+            try {
+                pkD.deletePokemon(p);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            updateProjectList();
+        } else {
+            JOptionPane
+                    .showMessageDialog(this,
+                            "Seleccione un projecto para eliminar.");
+        }
     }
 }

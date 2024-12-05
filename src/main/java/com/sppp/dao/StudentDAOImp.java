@@ -60,6 +60,26 @@ public class StudentDAOImp implements StudentDAO{
         student.setIdproject(project);
         return student;
     }
+    @Override
+    public Student getStudentByName(String name) throws SQLException {
+        Connection conn = DBConnection.getInstance().getConnection();
+        String query = "SELECT * FROM students WHERE name = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, name);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Student student = new Student();
+            student.setIdstudent(rs.getInt("idstudent"));
+            student.setName(rs.getString("name"));
+            student.setLastname(rs.getString("lastname"));
+            student.setNrc(rs.getString("nrc"));
+            student.setEnrolment(rs.getString("enrolment"));
+            return student;
+        }
+        return null;
+    }
+
 
     @Override
     public void updateStudent(Student student) throws SQLException {

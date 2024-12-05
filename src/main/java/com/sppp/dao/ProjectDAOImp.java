@@ -54,6 +54,26 @@ public class ProjectDAOImp implements ProjectDAO{
     }
 
     @Override
+    public Project getProjectByName(String nameprj) throws SQLException {
+        Connection conn = DBConnection.getInstance().getConnection();
+        String query = "SELECT * FROM students WHERE nameprj = ?";
+        PreparedStatement ps = conn.prepareStatement(query);
+        ps.setString(1, nameprj);
+
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            Project project = new Project();
+            project.setIdproject(rs.getInt("idproject"));
+            project.setNameprj(rs.getString("nameprj"));
+            project.setRelatedorg(rs.getString("relatedorg"));
+            project.setQuota(rs.getInt("quota"));
+            return project;
+        }
+        return null;
+    }
+
+
+    @Override
     public void updateProject(Project project) throws SQLException {
         if(project==null) return;
         Connection conn = DBConnection.getInstance().getConnection();

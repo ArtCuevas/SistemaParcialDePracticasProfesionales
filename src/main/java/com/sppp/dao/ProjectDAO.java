@@ -8,6 +8,7 @@ import java.util.List;
 public interface ProjectDAO {
     public void createProject(Project project) throws SQLException;
     public Project readProject(int id) throws SQLException;
+    public Project getProjectByName(String name) throws SQLException;
     public void updateProject(Project project) throws SQLException;
     public void deletePokemon(Project project) throws SQLException;
     public List<Project> getAllProjects() throws SQLException;

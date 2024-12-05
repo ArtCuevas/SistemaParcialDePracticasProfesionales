@@ -19,7 +19,7 @@ public class ProjectForm extends JFrame {
     public ProjectForm() {
         setTitle("Formulario de Proyecto");
         setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(5, 2, 10, 10));
 
