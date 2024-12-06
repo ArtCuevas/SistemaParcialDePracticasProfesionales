@@ -76,7 +76,7 @@ public class ProjectForm extends JFrame {
             String org = orgField.getText().trim();
             int quota = Integer.parseInt(quotaField.getText().trim());
 
-            if (name.isEmpty() || org.isEmpty() || quotaField.getText().trim().isEmpty()) {
+            if (name.isEmpty() || org.isEmpty() || quotaField.getText().trim().isEmpty() || quota < 1) {
                 JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;

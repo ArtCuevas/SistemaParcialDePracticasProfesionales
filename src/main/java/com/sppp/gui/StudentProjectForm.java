@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Crea una ventana donde despliega dos listas con proyectos y estudiantes para poder asignarle un proyecto a cada
+ * estudiante registrado
+ */
 public class StudentProjectForm extends JFrame {
     private JComboBox<String> studentComboBox;
     private JComboBox<String> projectComboBox;
@@ -67,19 +71,26 @@ public class StudentProjectForm extends JFrame {
         add(panel);
     }
 
+    /**
+     * Carga a todos los estudiantes sin proyecto asignado y proyectos con cupos disponibles a las listas desplegables
+     */
     private void loadComboBoxData() {
         try {
             List<Student> students = studentDAO.getAllStudents();
             for (Student student : students) {
-                String displayName = student.getName() + " " + student.getLastname();
-                studentComboBox.addItem(displayName);
-                studentMap.put(student.getName(), student.getIdstudent());
+                if(student.getIdproject() == null){
+                    String displayName = student.getName() + " " + student.getLastname();
+                    studentComboBox.addItem(displayName);
+                    studentMap.put(student.getName(), student.getIdstudent());
+                }
             }
 
             List<Project> projects = projectDAO.getAllProjects();
             for (Project project : projects) {
-                projectComboBox.addItem(project.getNameprj());
-                projectMap.put(project.getNameprj(), project.getIdproject());
+                if(project.getQuota() > 0){
+                    projectComboBox.addItem(project.getNameprj());
+                    projectMap.put(project.getNameprj(), project.getIdproject());
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al cargar datos: " +
@@ -87,6 +98,10 @@ public class StudentProjectForm extends JFrame {
         }
     }
 
+    /**
+     * Asigna el proyecto al estudiante en la base de datos, relacionando el Id del proyecto en la tabla de
+     * Student
+     */
     private void assignStudentToProject() {
         try {
             String selectedStudent = (String) studentComboBox.getSelectedItem();
