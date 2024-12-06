@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+/**
+ * Crea una ventana donde se solicitan los datos del proyecto
+ */
 public class ProjectForm extends JFrame {
     private JTextField projectNameField;
     private JTextField orgField;
@@ -62,6 +65,11 @@ public class ProjectForm extends JFrame {
         });
     }
 
+    /**
+     * Guarda el registro del proyecto en la base de datos, dado el Objeto Project creado y llenado por el usuario
+     * valida que los campos no esten vacios, pues todos son obligatorios, finalmente se limpia el formulario
+     * para que pueda seguir agregando proyectos
+     */
     private void saveProject() {
         try {
             String name = projectNameField.getText().trim();
@@ -91,6 +99,9 @@ public class ProjectForm extends JFrame {
         }
     }
 
+    /**
+     * Limpia los campos para el ingreso de datos
+     */
     private void cleanForm() {
         projectNameField.setText("");
         orgField.setText("");

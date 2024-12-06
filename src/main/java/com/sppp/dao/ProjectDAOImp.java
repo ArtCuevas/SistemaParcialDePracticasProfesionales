@@ -7,12 +7,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementa las operaciones CRUD definidas en la interfaz  para el objeto Project, incluye unicamente
+ * un String (tableName) como atributo, el cual indica el nombre de la tabla donde se realizaran las operaciones dentro
+ * de la base de datos
+ */
 public class ProjectDAOImp implements ProjectDAO{
 
     private String tableName;
 
     public ProjectDAOImp() {this.tableName="project";}
 
+    /**
+     * Crea un registro de Project en la base de datos, adicionalmente solicita las claves generadas, es decir el id
+     * autoincremental, el cual sera util para futuras operacioens dentro de la app
+     * @param project Project que se desea insertar a la base de datos
+     * @throws SQLException
+     */
     @Override
     public void createProject(Project project) throws SQLException {
         if(project==null) return;
@@ -32,6 +43,12 @@ public class ProjectDAOImp implements ProjectDAO{
         }
     }
 
+    /**
+     * Lee un registro de Project de la base de datos dado su ID
+     * @param id idproject (PRIMARY KEY) en la base de datos
+     * @return Un objecto de tipo Project
+     * @throws SQLException
+     */
     @Override
     public Project readProject(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
@@ -48,7 +65,12 @@ public class ProjectDAOImp implements ProjectDAO{
         }
         return project;
     }
-
+    /**
+     * Lee un registro de Project de la base de datos dado su nombre utilizando comodines
+     * @param nameprj nameprj (nombre del proyecto) en la base de datos VARCHAR
+     * @return Un objecto de tipo Project
+     * @throws SQLException
+     */
     @Override
     public Project getProjectByName(String nameprj) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
@@ -67,7 +89,11 @@ public class ProjectDAOImp implements ProjectDAO{
         return null;
     }
 
-
+    /**
+     * Actualiza los registros de un proyecto en la base de datos
+     * @param project objeto de tipo Project ya existente en la base de datos, con una o varias columnas actualizadas
+     * @throws SQLException
+     */
     @Override
     public void updateProject(Project project) throws SQLException {
         if(project==null) return;
@@ -81,6 +107,12 @@ public class ProjectDAOImp implements ProjectDAO{
         ps.executeUpdate();
     }
 
+    /**
+     * Elimina un registro en la base de datos siempre y cuando no tenga a ningun alumno asignado
+     * Dicha alerta se manda al usuario desde la GUI
+     * @param project Objeto de tipo Project a eliminar
+     * @throws SQLException
+     */
     @Override
     public void deleteProject(Project project) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
@@ -90,9 +122,14 @@ public class ProjectDAOImp implements ProjectDAO{
         ps.executeUpdate();
     }
 
+    /**
+     * Lee todos los registros de proyectos en la base de datos
+     * @return projects Una lista de objetos tipo Project con los registros de la base de datos
+     * @throws SQLException
+     */
     @Override
     public List<Project> getAllProjects() throws SQLException {
-        List<Project> projects = new ArrayList<Project>();
+        List<Project> projects = new ArrayList<>();
         Connection conn = DBConnection.getInstance().getConnection();
         String selectQuery = "SELECT idproject, nameprj, relatedorg, quota FROM " + tableName;
         PreparedStatement stmt = conn.prepareStatement(selectQuery);

@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Crea una ventana para poder actualizar los datos de algun proyecto previamente registrado
+ * el formulario que muestra esta prellenado con los datos de dicho proyecto y el usuario puede editar los que desee
+ */
 public class UpdateProjectForm extends JFrame {
 
         private JTextField nameField;
@@ -58,6 +62,10 @@ public class UpdateProjectForm extends JFrame {
             cancelButton.addActionListener(e -> dispose());
         }
 
+    /**
+     * Actualiza los cambios hechos por el usuario a la informacion del proyecto y lo guarda en la base de datos
+     * @param e Recibe el evento del boton "Guardar"
+     */
         private void saveChanges(ActionEvent e) {
             project.setNameprj(nameField.getText());
             project.setRelatedorg(orgField.getText());

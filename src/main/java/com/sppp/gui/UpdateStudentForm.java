@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * Crea una ventana para poder actualizar los datos de un estudiante, despliega un formulario con los datos prellenados
+ * del estudiante seleccionado en el StudentForm
+ */
 public class UpdateStudentForm extends JFrame {
     private JTextField nameField;
     private JTextField lastnameField;
@@ -62,6 +66,10 @@ public class UpdateStudentForm extends JFrame {
         cancelButton.addActionListener(e -> dispose());
     }
 
+    /**
+     * Guarda los cambios hecho por el usuario en la base de datos
+     * @param e Evento al dar clikc al boton de "Guardar"
+     */
     private void saveChanges(ActionEvent e) {
         student.setName(nameField.getText());
         student.setLastname(lastnameField.getText());

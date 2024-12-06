@@ -40,7 +40,7 @@ public class StudentProjectForm extends JFrame {
     }
 
     private void initUI() {
-        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(3, 2, 15, 15));
 
         JLabel studentLabel = new JLabel("Selecciona un estudiante:");
         studentComboBox = new JComboBox<>();

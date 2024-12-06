@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+/**
+ * Crea una ventana con un formulario para registrar estudiantes
+ */
 public class StudentForm extends JFrame {
     private JTextField nameField;
     private JTextField lastnameField;
@@ -77,6 +80,11 @@ public class StudentForm extends JFrame {
         add(panel);
     }
 
+    /**
+     * Guarda en la base de datos la informacion de un estudiante llenado por el usuario,
+     * valida que todos los campos esten llenos y finalmente limpia el formulario para permitir seguir registrando
+     * estudiantes
+     */
     private void saveStudent() {
         try {
             String name = nameField.getText().trim();
@@ -106,7 +114,9 @@ public class StudentForm extends JFrame {
                     ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    /**
+     * Limpia los campos para el ingreso de datos
+     */
     private void clearForm() {
         nameField.setText("");
         lastnameField.setText("");

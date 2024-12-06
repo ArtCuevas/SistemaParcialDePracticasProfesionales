@@ -8,11 +8,21 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementa las operaciones CRUD definidas en la interfaz  para el objeto Student, incluye unicamente
+ * un String (tableName) como atributo, el cual indica el nombre de la tabla donde se realizaran las operaciones dentro
+ * de la base de datos.
+ */
 public class StudentDAOImp implements StudentDAO{
     private String tableName;
 
     public StudentDAOImp() {this.tableName = "student";}
 
+    /**
+     * Crea un registro de estudiante dentro de la base de datos y retorna la PRIMARY KEY generada en la base de datos
+     * @param student Objeto de tipo Student que sera insertado
+     * @throws SQLException
+     */
     @Override
     public void createStudent(Student student) throws SQLException {
         if(student==null) return;
@@ -33,6 +43,12 @@ public class StudentDAOImp implements StudentDAO{
         }
     }
 
+    /**
+     * Consulta el registro de un estudiante junto con su projecto si es que existe (LEFT JOIN)
+     * @param id ID que indica la PRIMARY KEY en la base de datos para identificar al estudiante
+     * @return returna un objeto de tipo Student con la información leida en la base de datos
+     * @throws SQLException
+     */
     @Override
     public Student readStudent(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
@@ -56,6 +72,13 @@ public class StudentDAOImp implements StudentDAO{
         }
         return student;
     }
+
+    /**
+     * Obtiene al estudiante dado su nombre sin preguntar por los datos del projecto si es que tiene asigando alguno
+     * @param name (String) Nombre del estudiante a buscar en la base de datos
+     * @return Un objeto de tipo Student dado el nombre proporcionado o NULL en caso de no encontrarlo
+     * @throws SQLException
+     */
     @Override
     public Student getStudentByName(String name) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
@@ -75,7 +98,11 @@ public class StudentDAOImp implements StudentDAO{
         return null;
     }
 
-
+    /**
+     * Actualiza todas o algunas columnas de un estudiante en la base de datos
+     * @param student Objeto de tipo Student con datos actualizados con respecto a alguno ya guardado en la base de datos
+     * @throws SQLException
+     */
     @Override
     public void updateStudent(Student student) throws SQLException {
         if(student==null) return;
@@ -91,15 +118,32 @@ public class StudentDAOImp implements StudentDAO{
         ps.executeUpdate();
     }
 
+    /**
+     * Elimina un estudiante de la base de datos y en caso de que haya sido asignado a algun proyecto vuelve a aumentar
+     * el cupo de dicho proyecto
+     * @param student Objeto de tipo Student a ser eliminado de la base de datos
+     * @throws SQLException
+     */
     @Override
     public void deleteStudent(Student student) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "DELETE FROM " + tableName + " WHERE name = ?";
         PreparedStatement ps = conn.prepareStatement(query);
         ps.setString(1, student.getName());
-        ps.executeUpdate();
+        int affectedRows = ps.executeUpdate();
+        if(affectedRows == 1 && student.getIdproject() != null){
+            String updateQuotaQuery = "UPDATE project SET quota = quota + 1 WHERE idproject = ?";
+            PreparedStatement psQuota = conn.prepareStatement(updateQuotaQuery);
+            psQuota.setInt(1, student.getIdproject().getIdproject());
+            psQuota.executeUpdate();
+        }
     }
 
+    /**
+     * Lee cada registro de un estudiante de la base de datos, y si tiene un proyecto tambien lee la informacion de este
+     * @return retorna una List<Student> de objetos de tipo Student
+     * @throws SQLException
+     */
     @Override
     public List<Student> getAllStudents() throws SQLException {
         List<Student> students = new ArrayList<Student>();
@@ -125,6 +169,13 @@ public class StudentDAOImp implements StudentDAO{
         return students;
     }
 
+    /**
+     * Asigna un proyecto a un estudiante (Relacion 1-n) donde la PRIMARY KEY del proyecto se agrega como FOREING KEY
+     * al estudiante, adicionalmente decrementa el cupo del proyecto
+     * @param student Objeto de tipo Student a ser asginado (Relacionado con un projecto en la base de datos)
+     * @param project Objeto de tipo Project que sera usado para obtener el ID para relacionarlo al estudiante
+     * @throws SQLException
+     */
     @Override
     public void assignStudentToProject(Student student, Project project) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();

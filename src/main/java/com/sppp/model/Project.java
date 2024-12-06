@@ -1,5 +1,9 @@
 package com.sppp.model;
 
+/**
+ *  La clase Project representa y contiene la informacion de un projecto, misma que se almacenara en la base de datos
+ *  y sera usada en la GUI para interacturar con el usuario
+ */
 public class Project {
     private int idproject;
     private String nameprj;

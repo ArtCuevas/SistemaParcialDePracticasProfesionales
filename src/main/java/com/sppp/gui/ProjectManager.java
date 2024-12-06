@@ -11,17 +11,28 @@ import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Permite al usuario loggeado poder realizar acciones CRUD para un proyecto
+ * Se muestra unicamente el nombre del proyecto, asi como opciones de agregar, eliminar y actualizar
+ */
 public class ProjectManager extends JFrame {
     private DefaultListModel<String> projectListModel;
     private JList<String> projectJList;
     private JTextField searchField;
     private ArrayList<String> projects;
 
+    /**
+     * Coloca la ventana a la derecha
+     * @throws HeadlessException
+     */
     public ProjectManager() throws HeadlessException {
         setTitle("Lista de proyectos");
         setSize(500,500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int xRight = screenSize.width - getWidth();
+        int y = (screenSize.height - getHeight()) / 2;
+        setLocation(xRight,y);
 
         projects = new ArrayList<>();
         projectListModel = new DefaultListModel<>();
@@ -60,6 +71,9 @@ public class ProjectManager extends JFrame {
         loadInitialProjects();
     }
 
+    /**
+     * Agrega a la lista mostrada los proyectos ya registrados en la base de datos
+     */
     private void loadInitialProjects(){
         ProjectDAO projectDAO = new ProjectDAOImp();
         try{
@@ -74,6 +88,9 @@ public class ProjectManager extends JFrame {
         updateProjectListDisplay();
     }
 
+    /**
+     * Actualiza la lista visible para el usuario
+     */
     private void updateProjectListDisplay() {
         projectListModel.clear();
         for (String project : projects) {
@@ -81,6 +98,12 @@ public class ProjectManager extends JFrame {
         }
     }
 
+    /**
+     * Actualiza la lista en la base de datos a traves de un formulario donde dado el proyecto seleccionado
+     * se muestra un formulario prellenado (UpdateProjectForm) donde podra cambiar los datos de dicho proyecto
+     * Una vez finalizado se actualiza y se muestra al usuario los cambios
+     * @see #updateProjectListDisplay()
+     */
     private void updateProjectList() {
         String selectedProject = projectJList.getSelectedValue();
         if (selectedProject != null) {
@@ -102,6 +125,10 @@ public class ProjectManager extends JFrame {
         }
     }
 
+    /**
+     * Filtra la busqueda el usuario dentro del searchFied
+     * convierte el texto a minusculas al buscar y limpia la lista antes de mostrar el resultado
+     */
     private void filterProjectList(){
         String searchText = searchField.getText().toLowerCase();
         projectListModel.clear();
@@ -112,6 +139,10 @@ public class ProjectManager extends JFrame {
         }
     }
 
+    /**
+     * Abre un nuevo formulario para llenar los datos del proyecto y al cerrar vuelve a cargar los proyectos
+     * asi como actualizarlos
+     */
     private void addProject() {
         SwingUtilities.invokeLater(() -> {
             ProjectForm projectForm = new ProjectForm();
@@ -123,18 +154,25 @@ public class ProjectManager extends JFrame {
             });
             projectForm.setVisible(true);
         });
+        updateProjectListDisplay();
     }
 
+    /**
+     * Elimina un projecto seleccionado de la lista dado su nombre
+     * posteriormente actualiza la lista que se despliega
+     */
     private void deleteProject(){
         String selectedProject = projectJList.getSelectedValue();
         if (selectedProject != null) {
             projects.remove(selectedProject);
-            ProjectDAO pjD = new ProjectDAOImp();
+            ProjectDAO projectDAO = new ProjectDAOImp();
             Project p = new Project();
             p.setNameprj(selectedProject);
             try {
-                pjD.deleteProject(p);
+                projectDAO.deleteProject(p);
             } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this,"No es posible eliminar proyectos con " +
+                        "estudiantes asignados");
                 throw new RuntimeException(e);
             }
             updateProjectListDisplay();

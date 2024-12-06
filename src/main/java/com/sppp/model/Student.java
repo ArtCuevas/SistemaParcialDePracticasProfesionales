@@ -1,5 +1,8 @@
 package com.sppp.model;
-
+/**
+ *  La clase Student representa y contiene la informacion de un estudiante, misma que se almacenara en la base de datos
+ *  y sera usada en la GUI para interacturar con el usuario
+ */
 public class Student {
     private int idstudent;
     private String name;

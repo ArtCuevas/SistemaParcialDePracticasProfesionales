@@ -1,5 +1,8 @@
 package com.sppp.model;
-
+/**
+ *  La clase User representa y contiene la informacion de un usuario, misma que se almacenara en la base de datos
+ *  y sera usada en la GUI para interacturar con el usuario
+ */
 public class User {
     private int iduser;
     private String username;
