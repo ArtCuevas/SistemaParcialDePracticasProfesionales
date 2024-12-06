@@ -10,6 +10,6 @@ public interface ProjectDAO {
     public Project readProject(int id) throws SQLException;
     public Project getProjectByName(String name) throws SQLException;
     public void updateProject(Project project) throws SQLException;
-    public void deletePokemon(Project project) throws SQLException;
+    public void deleteProject(Project project) throws SQLException;
     public List<Project> getAllProjects() throws SQLException;
 }

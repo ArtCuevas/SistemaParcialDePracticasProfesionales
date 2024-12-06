@@ -33,15 +33,15 @@ public class UpdateProjectForm extends JFrame {
             JPanel mainPanel = new JPanel(new GridLayout(4, 2, 10, 10));
 
             mainPanel.add(new JLabel("Nombre del Proyecto:"));
-            nameField = new JTextField(project.getNameprj()); // Pre-rellenado
+            nameField = new JTextField(project.getNameprj());
             mainPanel.add(nameField);
 
             mainPanel.add(new JLabel("Organización Relacionada:"));
-            orgField = new JTextField(project.getRelatedorg()); // Pre-rellenado
+            orgField = new JTextField(project.getRelatedorg());
             mainPanel.add(orgField);
 
             mainPanel.add(new JLabel("Cupo:"));
-            quotaField = new JTextField(String.valueOf(project.getQuota())); // Pre-rellenado
+            quotaField = new JTextField(String.valueOf(project.getQuota()));
             mainPanel.add(quotaField);
 
             saveButton = new JButton("Guardar");
@@ -59,26 +59,24 @@ public class UpdateProjectForm extends JFrame {
         }
 
         private void saveChanges(ActionEvent e) {
-            // Actualizar solo los campos modificados
             project.setNameprj(nameField.getText());
             project.setRelatedorg(orgField.getText());
             try {
                 project.setQuota(Integer.parseInt(quotaField.getText()));
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "El cupo debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El cupo debe ser un número válido.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            // Guardar en la base de datos
             ProjectDAO projectDAO = new ProjectDAOImp();
             try {
                 projectDAO.updateProject(project);
                 JOptionPane.showMessageDialog(this, "Proyecto actualizado exitosamente.");
                 dispose();
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Error al actualizar el proyecto: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al actualizar el proyecto: " +
+                        ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
-
 }

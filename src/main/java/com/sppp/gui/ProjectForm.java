@@ -80,8 +80,7 @@ public class ProjectForm extends JFrame {
 
             projectDAO.createProject(project);
 
-            JOptionPane.showMessageDialog(this, "Proyecto guardado exitosamente." +
-                    "\nID del proyecto: " + project.getIdproject());
+            JOptionPane.showMessageDialog(this, "Proyecto guardado exitosamente.");
             cleanForm();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "La cuota debe ser un número válido.",
@@ -97,5 +96,4 @@ public class ProjectForm extends JFrame {
         orgField.setText("");
         quotaField.setText("");
     }
-
 }

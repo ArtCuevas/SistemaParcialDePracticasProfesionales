@@ -23,7 +23,7 @@ public class StudentForm extends JFrame {
     public StudentForm() {
         setTitle("Formulario de Estudiante");
         setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         studentDAO = new StudentDAOImp();
@@ -31,11 +31,9 @@ public class StudentForm extends JFrame {
     }
 
     private void initUI() {
-        // Crear el panel principal
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(5, 2, 10, 10));
 
-        // Etiquetas y campos de texto
         JLabel nameLabel = new JLabel("Nombre:");
         nameField = new JTextField();
 
@@ -97,6 +95,7 @@ public class StudentForm extends JFrame {
             student.setLastname(lastname);
             student.setNrc(nrc);
             student.setEnrolment(enrolment);
+
             studentDAO.createStudent(student);
 
             JOptionPane.showMessageDialog(this, "Estudiante guardado exitosamente.");

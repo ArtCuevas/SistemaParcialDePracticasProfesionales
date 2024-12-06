@@ -6,8 +6,9 @@ import com.sppp.model.Student;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class StudentManager extends JFrame {
     private DefaultListModel<String> studentListModel;
@@ -39,11 +40,13 @@ public class StudentManager extends JFrame {
         JButton addButton = new JButton("Agregar");
         JButton updateButton = new JButton("Actualizar");
         JButton deleteButton = new JButton("Eliminar");
+        JButton assignButton = new JButton("Asignar proyecto");
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(assignButton);
 
         add(topPanel, BorderLayout.NORTH);
         add(new JScrollPane(studentJList), BorderLayout.CENTER);
@@ -54,17 +57,26 @@ public class StudentManager extends JFrame {
         addButton.addActionListener(e -> addStudent());
         updateButton.addActionListener(e -> updateStudentList());
         deleteButton.addActionListener(e -> deleteStudent());
+        assignButton.addActionListener(e -> assignStudent());
 
         loadInitialStudents();
+    }
+
+    private void assignStudent() {
+        SwingUtilities.invokeLater(() -> {
+            StudentProjectForm studentProjectForm = new StudentProjectForm();
+            studentProjectForm.setVisible(true);
+        });
     }
 
     private void loadInitialStudents() {
         StudentDAO studentDAO = new StudentDAOImp();
         try {
             ArrayList<Student> studentData = (ArrayList<Student>) studentDAO.getAllStudents();
-            students = (ArrayList<String>) studentData.stream()
-                    .map(Student::getName)
-                    .collect(Collectors.toList());
+            students.clear();
+            for (Student student : studentData) {
+                students.add(student.getName());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -81,6 +93,7 @@ public class StudentManager extends JFrame {
     private void filterStudentList() {
         String searchText = searchField.getText().toLowerCase();
         studentListModel.clear();
+
         for (String student : students) {
             if (student.toLowerCase().contains(searchText)) {
                 studentListModel.addElement(student);
@@ -91,6 +104,12 @@ public class StudentManager extends JFrame {
     private void addStudent() {
         SwingUtilities.invokeLater(() -> {
             StudentForm studentForm = new StudentForm();
+            studentForm.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadInitialStudents();
+                }
+            });
             studentForm.setVisible(true);
         });
         updateStudentListDisplay();

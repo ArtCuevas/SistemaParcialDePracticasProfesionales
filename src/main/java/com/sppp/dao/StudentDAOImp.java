@@ -4,10 +4,7 @@ import com.sppp.connection.DBConnection;
 import com.sppp.model.Project;
 import com.sppp.model.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class StudentDAOImp implements StudentDAO{
         if(student==null) return;
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "INSERT INTO " + tableName + "(name,lastname,nrc,enrolment) VALUES (?,?,?,?)";
-        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, student.getName());
         ps.setString(2,student.getLastname());
         ps.setString(3,student.getNrc());
@@ -40,33 +37,31 @@ public class StudentDAOImp implements StudentDAO{
     public Student readStudent(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "SELECT name, lastname, nrc, enrolment, nameprj, relatedorg, quota FROM " + tableName +
-                " JOIN project ON "+ tableName + ".idproyect = project.idproject WHERE idstudent = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
+                " LEFT JOIN project ON "+ tableName + ".idproject = project.idproject WHERE idstudent = ?";
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         Student student = new Student();
+        student.setIdstudent(id);
         if (rs.next()) {
             student.setName(rs.getString(1));
             student.setLastname(rs.getString(2));
             student.setNrc(rs.getString(3));
             student.setEnrolment(rs.getString(4));
-        }
-        Project project = new Project();
-        if(rs.next()){
+            Project project = new Project();
             project.setNameprj(rs.getString(5));
             project.setRelatedorg(rs.getString(6));
             project.setQuota(rs.getInt(7));
+            student.setIdproject(project);
         }
-        student.setIdproject(project);
         return student;
     }
     @Override
     public Student getStudentByName(String name) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "SELECT * FROM students WHERE name = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
+        String query = "SELECT * FROM "+ tableName +" WHERE name LIKE CONCAT('%',?,'%')";
+        PreparedStatement ps = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, name);
-
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             Student student = new Student();
@@ -109,37 +104,44 @@ public class StudentDAOImp implements StudentDAO{
     public List<Student> getAllStudents() throws SQLException {
         List<Student> students = new ArrayList<Student>();
         Connection conn = DBConnection.getInstance().getConnection();
-        String selectQuery = "SELECT name, lastname, nrc, enrolment, nameprj, relatedorg, quota FROM " + tableName +
-                " JOIN project ON "+ tableName + ".idproyect = project.idproject WHERE idstudent = ?";
+        String selectQuery = "SELECT idstudent, name, lastname, nrc, enrolment, nameprj, relatedorg, quota FROM "
+                + tableName + " LEFT JOIN project ON "+ tableName + ".idproject = project.idproject";
         PreparedStatement stmt = conn.prepareStatement(selectQuery);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
             Student student = new Student();
-            student.setName(rs.getString(1));
-            student.setLastname(rs.getString(2));
-            student.setNrc(rs.getString(3));
-            student.setEnrolment(rs.getString(4));
+            student.setIdstudent(rs.getInt(1));
+            student.setName(rs.getString(2));
+            student.setLastname(rs.getString(3));
+            student.setNrc(rs.getString(4));
+            student.setEnrolment(rs.getString(5));
             students.add(student);
             Project project = new Project();
-            project.setNameprj(rs.getString(5));
-            project.setRelatedorg(rs.getString(6));
-            project.setQuota(rs.getInt(7));
+            project.setNameprj(rs.getString(6));
+            project.setRelatedorg(rs.getString(7));
+            project.setQuota(rs.getInt(8));
             student.setIdproject(project);
         }
         return students;
     }
 
     @Override
-    public void assignStudentToProject(int studentId, int projectId) throws SQLException {
+    public void assignStudentToProject(Student student, Project project) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "UPDATE " + tableName + " SET project_id = ? WHERE id = ?";
+        String query = "UPDATE " + tableName + " SET idproject = ? WHERE idstudent = ?";
         PreparedStatement ps = conn.prepareStatement(query);
-        ps.setInt(1, projectId);
-        ps.setInt(2, studentId);
+        ps.setInt(1, project.getIdproject());
+        ps.setInt(2, student.getIdstudent());
 
         int affectedRows = ps.executeUpdate();
         if (affectedRows == 0) {
             throw new SQLException("No se pudo asignar el proyecto al estudiante.");
+        }
+        if(affectedRows == 1){
+            String reduceQuotaQuery = "UPDATE project SET quota = quota - 1 WHERE idproject = ?";
+            PreparedStatement psQuota = conn.prepareStatement(reduceQuotaQuery);
+            psQuota.setInt(1, project.getIdproject());
+            psQuota.executeUpdate();
         }
     }
 }

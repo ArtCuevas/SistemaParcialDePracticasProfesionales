@@ -72,12 +72,10 @@ public class Login extends JFrame{
                 User dbUser = userDao.readUser(1);
                 user = dbUser.getUsername();
                 pass = dbUser.getPassword();
-                System.out.println(user + ": "+ pass );
                 return user.equals(username) && pass.equals(password);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
     }
-
 }

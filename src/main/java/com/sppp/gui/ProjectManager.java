@@ -6,9 +6,10 @@ import com.sppp.model.Project;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class ProjectManager extends JFrame {
     private DefaultListModel<String> projectListModel;
@@ -19,7 +20,7 @@ public class ProjectManager extends JFrame {
     public ProjectManager() throws HeadlessException {
         setTitle("Lista de proyectos");
         setSize(500,500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         projects = new ArrayList<>();
@@ -63,13 +64,15 @@ public class ProjectManager extends JFrame {
         ProjectDAO projectDAO = new ProjectDAOImp();
         try{
             ArrayList<Project> p = (ArrayList<Project>) projectDAO.getAllProjects();
-            projects = (ArrayList<String>) p.stream().map(Project::getNameprj).collect(Collectors.toList());
+            projects.clear();
+            for(Project project : p){
+                projects.add(project.getNameprj());
+            }
         }catch(SQLException e){
             throw new RuntimeException(e);
         }
-        updateProjectList();
+        updateProjectListDisplay();
     }
-
 
     private void updateProjectListDisplay() {
         projectListModel.clear();
@@ -102,9 +105,9 @@ public class ProjectManager extends JFrame {
     private void filterProjectList(){
         String searchText = searchField.getText().toLowerCase();
         projectListModel.clear();
-        for (String project: projects){
-            if(project.toLowerCase().contains(searchText)){
-                projectListModel.addElement(project);
+        for (String project : projects) {
+            if (project.toLowerCase().contains(searchText)) {
+                   projectListModel.addElement(project);
             }
         }
     }
@@ -112,24 +115,29 @@ public class ProjectManager extends JFrame {
     private void addProject() {
         SwingUtilities.invokeLater(() -> {
             ProjectForm projectForm = new ProjectForm();
+            projectForm.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadInitialProjects();
+                }
+            });
             projectForm.setVisible(true);
         });
-        updateProjectList();
     }
 
     private void deleteProject(){
         String selectedProject = projectJList.getSelectedValue();
         if (selectedProject != null) {
             projects.remove(selectedProject);
-            ProjectDAO pkD = new ProjectDAOImp();
+            ProjectDAO pjD = new ProjectDAOImp();
             Project p = new Project();
             p.setNameprj(selectedProject);
             try {
-                pkD.deletePokemon(p);
+                pjD.deleteProject(p);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            updateProjectList();
+            updateProjectListDisplay();
         } else {
             JOptionPane
                     .showMessageDialog(this,

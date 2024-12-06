@@ -33,19 +33,19 @@ public class UpdateStudentForm extends JFrame {
         JPanel mainPanel = new JPanel(new GridLayout(5, 2, 10, 10));
 
         mainPanel.add(new JLabel("Nombre:"));
-        nameField = new JTextField(student.getName()); // Pre-rellenado
+        nameField = new JTextField(student.getName());
         mainPanel.add(nameField);
 
         mainPanel.add(new JLabel("Apellido:"));
-        lastnameField = new JTextField(student.getLastname()); // Pre-rellenado
+        lastnameField = new JTextField(student.getLastname());
         mainPanel.add(lastnameField);
 
         mainPanel.add(new JLabel("NRC:"));
-        nrcField = new JTextField(student.getNrc()); // Pre-rellenado
+        nrcField = new JTextField(student.getNrc());
         mainPanel.add(nrcField);
 
         mainPanel.add(new JLabel("Matrícula:"));
-        enrolmentField = new JTextField(student.getEnrolment()); // Pre-rellenado
+        enrolmentField = new JTextField(student.getEnrolment());
         mainPanel.add(enrolmentField);
 
         saveButton = new JButton("Guardar");
@@ -63,13 +63,11 @@ public class UpdateStudentForm extends JFrame {
     }
 
     private void saveChanges(ActionEvent e) {
-        // Actualizar solo los campos modificados
         student.setName(nameField.getText());
         student.setLastname(lastnameField.getText());
         student.setNrc(nrcField.getText());
         student.setEnrolment(enrolmentField.getText());
 
-        // Guardar en la base de datos
         StudentDAO studentDAO = new StudentDAOImp();
         try {
             studentDAO.updateStudent(student);

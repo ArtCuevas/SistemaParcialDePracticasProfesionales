@@ -2,12 +2,8 @@ package com.sppp.dao;
 
 import com.sppp.connection.DBConnection;
 import com.sppp.model.Project;
-import com.sppp.model.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +35,8 @@ public class ProjectDAOImp implements ProjectDAO{
     @Override
     public Project readProject(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "SELECT nameprj FROM " + tableName + " WHERE idproject = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
+        String query = "SELECT idproject, nameprj, relatedorg, quota FROM " + tableName + " WHERE idproject = ?";
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         Project project = new Project();
@@ -56,10 +52,9 @@ public class ProjectDAOImp implements ProjectDAO{
     @Override
     public Project getProjectByName(String nameprj) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
-        String query = "SELECT * FROM students WHERE nameprj = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
+        String query = "SELECT * FROM " + tableName + " WHERE nameprj LIKE CONCAT('%',?,'%')";
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, nameprj);
-
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             Project project = new Project();
@@ -87,7 +82,7 @@ public class ProjectDAOImp implements ProjectDAO{
     }
 
     @Override
-    public void deletePokemon(Project project) throws SQLException {
+    public void deleteProject(Project project) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "DELETE FROM " + tableName + " WHERE nameprj = ?";
         PreparedStatement ps = conn.prepareStatement(query);
@@ -99,7 +94,7 @@ public class ProjectDAOImp implements ProjectDAO{
     public List<Project> getAllProjects() throws SQLException {
         List<Project> projects = new ArrayList<Project>();
         Connection conn = DBConnection.getInstance().getConnection();
-        String selectQuery = "SELECT idproject, nameprj, relatedorg,quota FROM " + tableName;
+        String selectQuery = "SELECT idproject, nameprj, relatedorg, quota FROM " + tableName;
         PreparedStatement stmt = conn.prepareStatement(selectQuery);
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
