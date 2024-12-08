@@ -3,10 +3,7 @@ package com.sppp.dao;
 import com.sppp.connection.DBConnection;
 import com.sppp.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +27,15 @@ public class UserDAOImp implements UserDAO{
         if(user==null) return;
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "INSERT INTO " + tableName + "(username,password) VALUES (?,?)";
-        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement ps = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, user.getUsername());
         ps.setString(2, user.getPassword());
         ps.execute();
+        ResultSet generatedKeys = ps.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            int id = generatedKeys.getInt(1);
+            user.setIduser(id);
+        }
     }
 
     /**
@@ -47,13 +49,14 @@ public class UserDAOImp implements UserDAO{
     public User readUser(int id) throws SQLException {
         Connection conn = DBConnection.getInstance().getConnection();
         String query = "SELECT username,password FROM " + tableName + " WHERE iduser = ?";
-        PreparedStatement ps = conn.prepareStatement(query);
+        PreparedStatement ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         User user = new User();
         if (rs.next()) {
             user.setUsername(rs.getString(1));
             user.setPassword(rs.getString(2));
+            user.setIduser(id);
         }
         return user;
     }
